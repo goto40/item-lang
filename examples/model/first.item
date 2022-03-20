@@ -1,4 +1,10 @@
-package first {
+package basic_stuff {
+    property_set props {
+        property optional mydescription: STRING
+    }
+}
+
+package first (property_set basic_stuff.props) {
     rawtype my_int UINT 32
 
     struct First {
