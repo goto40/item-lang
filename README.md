@@ -7,6 +7,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
 ## Plan
 
  - [X] Migrate raw grammar
+ - [ ] allow certain keywords (e.g. 'description') as ID in certain cases (e.g. for the name of property definitions)
  - [ ] Scoping
    - [ ] Simple model elements, like types (FQN based)
    - [ ] Formulas
