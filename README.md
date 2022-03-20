@@ -8,10 +8,11 @@ This is work-in-progress and my playground to play with [langium](https://langiu
 
  - [X] Migrate raw grammar
  - [ ] allow certain keywords (e.g. 'description') as ID in certain cases (e.g. for the name of property definitions)
+ - [ ] importURI/multi-file
  - [ ] Scoping
    - [ ] Simple model elements, like types (FQN based)
    - [ ] Formulas
-   - [ ] Properties
+   - [X] Properties (basic scoping / interactive test only)
  - [ ] built-in model (e.g. built-in types and properties)
  - [ ] validation
    - [ ] make list of available validation rules here
