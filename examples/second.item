@@ -1,0 +1,7 @@
+import "first.item"
+
+package second {
+    struct Second {
+        scalar x: first.my_int
+    }
+}
