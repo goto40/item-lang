@@ -1,6 +1,6 @@
 import { ValidationAcceptor, ValidationCheck, ValidationRegistry } from 'langium';
 import { ItemLanguageAstType, Person } from './generated/ast';
-import { ItemLanguageServices } from './item-language-module';
+import type { ItemLanguageServices } from './item-language-module';
 
 /**
  * Map AST node types to validation checks.

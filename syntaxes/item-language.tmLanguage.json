@@ -14,8 +14,14 @@
       "match": "\\b(Hello|person)\\b"
     },
     {
-      "name": "keyword.symbol.item-language",
-      "match": "(\\!)"
+      "name": "string.quoted.double.item-language",
+      "begin": "\"",
+      "end": "\""
+    },
+    {
+      "name": "string.quoted.single.item-language",
+      "begin": "'",
+      "end": "'"
     }
   ],
   "repository": {

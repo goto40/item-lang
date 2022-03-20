@@ -5,8 +5,8 @@ import { createItemLanguageServices } from './item-language-module';
 // Create a connection to the client
 const connection = createConnection(ProposedFeatures.all);
 
-// Inject the language services
-const services = createItemLanguageServices({ connection });
+// Inject the shared services and language-specific services
+const { shared } = createItemLanguageServices({ connection });
 
-// Start the language server with the language-specific services
-startLanguageServer(services);
+// Start the language server with the shared services
+startLanguageServer(shared);

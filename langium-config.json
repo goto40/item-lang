@@ -1,9 +1,12 @@
 {
-    "languageId": "item-language",
-    "grammar": "src/language-server/item-language.langium",
-    "fileExtensions": [".item", ".msg"],
-    "out": "src/language-server/generated",
-    "textMate": {
-        "out": "syntaxes/item-language.tmLanguage.json"
-    }
+    "projectName": "ItemLanguage",
+    "languages": [{
+        "id": "item-language",
+        "grammar": "src/language-server/item-language.langium",
+        "fileExtensions": [".item", ".msg"],
+        "textMate": {
+            "out": "syntaxes/item-language.tmLanguage.json"
+        }
+    }],
+    "out": "src/language-server/generated"
 }

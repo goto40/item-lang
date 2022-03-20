@@ -1,2 +1,0 @@
-person Pierre
-Hello Pierre!
