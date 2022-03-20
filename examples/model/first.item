@@ -6,3 +6,10 @@ package first {
         scalar y: my_int
     }
 }
+
+package first_other {
+    struct First {
+        scalar x: first.my_int
+        scalar y: first.my_int
+    }
+}
