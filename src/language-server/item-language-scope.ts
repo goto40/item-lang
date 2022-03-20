@@ -1,10 +1,9 @@
-import { AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap} from 'langium';
+import { getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
-import { Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel} from './generated/ast';
-//import { inspect } from 'util'
+import { Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition} from './generated/ast';
+import { ItemLanguageServices } from './item-language-module';
 
-/*
 function get_parent_package(node: AstNode): Package|null {
     let p = node.$container;
     while(!isPackage(p)) {
@@ -17,40 +16,39 @@ function get_parent_package(node: AstNode): Package|null {
 
 export class ItemLangScopeProvider extends DefaultScopeProvider {
 
+    descriptionProvider: AstNodeDescriptionProvider;
+
+    constructor(services: ItemLanguageServices) {
+        super(services);
+        this.descriptionProvider = services.index.AstNodeDescriptionProvider;
+    }
+
     getScope(node: AstNode, referenceId: string): Scope {
         if (referenceId=="Property:definition" && node.$type=='Property') {
-            const scopes: AstNodeDescription[] = [];
-            console.log("PI looking for "+referenceId+" "+(node as Property).definition.$refText);
-            const definitions : PropertyDefinition[] = []; //get_parent_package(node)?.property_set?.ref?.property_definitions;
-            console.log(`1definitions ${inspect(get_parent_package(node)?.property_set?.ref)}`)
-            //console.log(`1definitions ${inspect(get_parent_package(node)?.property_set)}`)
-            //console.log(`2definitions ${definitions}`)
-            if (definitions) {
-                definitions.forEach(element => {
-                    scopes.push( { node: element, type: element.$type, name: element.name, documentUri:node.$document!.uri, path: ''} )
-                });
-            }
-            if (scopes.length==8880) {
-                return new SimpleScope(stream(scopes));
+            let definitions: PropertyDefinition[]|undefined = [];
+            definitions = get_parent_package(node)?.property_set?.ref?.property_definitions;
+            console.log(`definitions==${definitions}`);
+            if (definitions!==undefined) {
+                definitions.forEach( d => { console.log(`name==${d.name}`); });
+                // solution suggested here: https://github.com/langium/langium/discussions/401
+                const descriptions = stream(definitions).map(element =>
+                    this.descriptionProvider.createDescription(element, element.name, getDocument(element)));
+                return new StreamScope(descriptions);
             }
             else {
                 const result = super.getScope(node, referenceId);
                 return result;    
             }
+    
         }
         else {
             const result = super.getScope(node, referenceId);
-            // console.error(`PI default lookup for ${referenceId}, ${node.$type} -> ${inspect(result)}`);
-            // result.getAllElements().forEach( (val, idx) => {
-            //     console.log(`----------------------${referenceId}`);
-            //     console.log(inspect(val))
-            // })
             return result;
         }
     }
 
 }
-*/
+
 export class ItemLangScopeComputation extends DefaultScopeComputation {
 
     constructor(services: LangiumServices) {

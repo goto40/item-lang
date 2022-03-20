@@ -8,8 +8,8 @@ package first (property_set basic_stuff.props) {
     rawtype my_int UINT 32
 
     struct First {
-        scalar x: my_int
-        scalar y: my_int
+        scalar x: my_int (.mydescription="Test")
+        scalar y: my_int (.mydescription="Hello")
     }
 }
 
