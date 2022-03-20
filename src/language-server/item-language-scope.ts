@@ -1,7 +1,7 @@
 import { AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
-import { Model, Package, isPackage, Struct, isStruct, Constants, isModel} from './generated/ast';
+import { Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel} from './generated/ast';
 //import { inspect } from 'util'
 
 /*
@@ -64,11 +64,11 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
         return scopes;
     }
 
-    protected async processContainer(container: Model | Package | Struct, scopes: PrecomputedScopes, document: LangiumDocument, cancelToken: CancellationToken): Promise<AstNodeDescription[]> {
+    protected async processContainer(container: Model | Package | Struct | Constants, scopes: PrecomputedScopes, document: LangiumDocument, cancelToken: CancellationToken): Promise<AstNodeDescription[]> {
         const localDescriptions: AstNodeDescription[] = [];
         if (isPackage(container) || isModel(container)) {
             for (const element of container.packages) {
-                console.log(`processContainer.. ${element.name}`)
+                // console.log(`processContainer.. ${element.name}`)
                 interruptAndCheck(cancelToken);
                 const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
                 for (const description of nestedDescriptions) {
@@ -90,6 +90,15 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
                     }
                 }
             }
+            for (const element of container.constants) {
+                interruptAndCheck(cancelToken);
+                const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
+                for (const description of nestedDescriptions) {
+                    // Add qualified names to the container
+                    const qualified = this.createQualifiedDescription(element, description, document);
+                    localDescriptions.push(qualified);
+                }
+            }
         }
         if (isPackage(container)) {
             for (const element of container.property_sets) {
@@ -102,26 +111,26 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
                 const description = this.descriptions.createDescription(element, element.name, document);
                 localDescriptions.push(description);                
             }    
-            // for (const element of (container as Package).constants) {
-            //     interruptAndCheck(cancelToken);
-            //     const description = this.descriptions.createDescription(element, element.name, document);
-            //     localDescriptions.push(description);                
-            // }    
+            for (const element of (container as Package).constants) {
+                interruptAndCheck(cancelToken);
+                const description = this.descriptions.createDescription(element, element.name, document);
+                localDescriptions.push(description);                
+            }    
         }
-        // if (isStruct(container)) {
-        //     for (const element of container.constant_entries) {
-        //         interruptAndCheck(cancelToken);
-        //         const description = this.descriptions.createDescription(element, element.name, document);
-        //         localDescriptions.push(description);                
-        //     }    
-        // }
-        // if (isConstants(container)) {
-        //     for (const element of container.constant_entries) {
-        //         interruptAndCheck(cancelToken);
-        //         const description = this.descriptions.createDescription(element, element.name, document);
-        //         localDescriptions.push(description);                
-        //     }    
-        // }
+        if (isStruct(container)) {
+            for (const element of container.constant_entries) {
+                interruptAndCheck(cancelToken);
+                const description = this.descriptions.createDescription(element, element.name, document);
+                localDescriptions.push(description);                
+            }    
+        }
+        if (isConstants(container)) {
+            for (const element of container.constant_entries) {
+                interruptAndCheck(cancelToken);
+                const description = this.descriptions.createDescription(element, element.name, document);
+                localDescriptions.push(description);                
+            }    
+        }
         scopes.addAll(container, localDescriptions);
         return localDescriptions;
     }
