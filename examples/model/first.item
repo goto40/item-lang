@@ -1,0 +1,8 @@
+package first {
+    rawtype my_int UINT 32
+
+    struct First {
+        scalar x: my_int
+        scalar y: my_int
+    }
+}

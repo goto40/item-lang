@@ -11,17 +11,7 @@
     },
     {
       "name": "keyword.control.item-language",
-      "match": "\\b(Hello|person)\\b"
-    },
-    {
-      "name": "string.quoted.double.item-language",
-      "begin": "\"",
-      "end": "\""
-    },
-    {
-      "name": "string.quoted.single.item-language",
-      "begin": "'",
-      "end": "'"
+      "match": "\\b(and|applicable|applicable_for|array|ATTRTYPE|BOOL|CONST|constant|constants|description|embedded|enum|ENUM|enum_value|extends|false|FLOAT|for|if|import|INT|message|optional|or|package|per|property|property_set|rawtype|scalar|STRING|struct|struct_definition|times|times_per_message|to|true|UINT|value|variant)\\b"
     }
   ],
   "repository": {

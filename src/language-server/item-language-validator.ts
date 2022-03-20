@@ -1,5 +1,5 @@
 import { ValidationAcceptor, ValidationCheck, ValidationRegistry } from 'langium';
-import { ItemLanguageAstType, Person } from './generated/ast';
+import { ItemLanguageAstType, Package } from './generated/ast';
 import type { ItemLanguageServices } from './item-language-module';
 
 /**
@@ -15,7 +15,7 @@ export class ItemLanguageValidationRegistry extends ValidationRegistry {
         super(services);
         const validator = services.validation.ItemLanguageValidator;
         const checks: ItemLanguageChecks = {
-            Person: validator.checkPersonStartsWithCapital
+            Package: validator.checkPackageStartsWithLowercase
         };
         this.register(checks, validator);
     }
@@ -26,11 +26,11 @@ export class ItemLanguageValidationRegistry extends ValidationRegistry {
  */
 export class ItemLanguageValidator {
 
-    checkPersonStartsWithCapital(person: Person, accept: ValidationAcceptor): void {
-        if (person.name) {
-            const firstChar = person.name.substring(0, 1);
-            if (firstChar.toUpperCase() !== firstChar) {
-                accept('warning', 'Person name should start with a capital.', { node: person, property: 'name' });
+    checkPackageStartsWithLowercase(p: Package, accept: ValidationAcceptor): void {
+        if (p.name) {
+            const firstChar = p.name.substring(0, 1);
+            if (firstChar.toLowerCase() !== firstChar) {
+                accept('warning', 'Package name should start with a lowercase letter.', { node: p, property: 'name' });
             }
         }
     }
