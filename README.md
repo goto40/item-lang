@@ -6,10 +6,15 @@ This is work-in-progress and my playground to play with [langium](https://langiu
 
 ## Plan
 
- [X] Migrate raw grammar
- [ ] Scoping
-   [ ] Simple model elements, like types (FQN based)
-   [ ] Formulas
-   [ ] Properties
- [ ] built-in model (e.g. built-in types and properties)
- ...
+ - [X] Migrate raw grammar
+ - [ ] Scoping
+   - [ ] Simple model elements, like types (FQN based)
+   - [ ] Formulas
+   - [ ] Properties
+ - [ ] built-in model (e.g. built-in types and properties)
+ - [ ] validation
+  - [ ] make list of available validation rules here
+ - [ ] test framework setup
+ - [ ] tests
+   - [ ] make a list of available tests in the original python version
+ 
