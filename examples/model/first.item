@@ -1,6 +1,6 @@
 package basic_stuff {
     property_set props {
-        property optional mydescription: STRING
+        property optional description: STRING
     }
 }
 
@@ -8,8 +8,8 @@ package first (property_set basic_stuff.props) {
     rawtype my_int UINT 32
 
     struct First {
-        scalar x: my_int (.mydescription="Test")
-        scalar y: my_int (.mydescription="Hello")
+        scalar x: my_int (.description="Test")
+        scalar y: my_int (.description="Hello")
     }
 }
 

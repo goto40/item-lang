@@ -7,13 +7,13 @@ This is work-in-progress and my playground to play with [langium](https://langiu
 ## Plan
 
  - [X] Migrate raw grammar
- - [ ] allow certain keywords (e.g. 'description') as ID in certain cases (e.g. for the name of property definitions)
- - [ ] importURI/multi-file
+ - [X] allow certain keywords (e.g. 'description') as ID in certain cases (e.g. for the name of property definitions): https://blogs.itemis.com/en/xtext-hint-identifiers-conflicting-with-keywords
+ - [ ] importURI/multi-file: https://github.com/langium/langium/discussions/458
  - [ ] Scoping
    - [ ] Simple model elements, like types (FQN based)
    - [ ] Formulas
-   - [X] Properties (basic scoping / interactive test only)
- - [ ] built-in model (e.g. built-in types and properties)
+   - [X] Properties (basic scoping / interactive test only): https://github.com/langium/langium/discussions/401
+ - [ ] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
  - [ ] validation
    - [ ] make list of available validation rules here
  - [ ] test framework setup

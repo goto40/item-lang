@@ -4,7 +4,7 @@ entry Model:
     (imports+=Import)*
     (packages+=Package)*;
 
-Package: 'package' name=ID (packages+=Package|
+Package: 'package' name=ValidID (packages+=Package|
     ('(' ('property_set' property_set=[PropertySet:FQN])?
         ('.' 'description' '=' description=MYSTRING)?
       ')')?
@@ -13,13 +13,13 @@ Package: 'package' name=ID (packages+=Package|
         ('{' (property_sets+=PropertySet|items+=Type|constants+=Constants|packages+=Package)+ '}'))
     );
 
-Struct: 'struct' name=ID ( '(' properties+=Property (',' properties+=Property)* ')' )?
+Struct: 'struct' name=ValidID ( '(' properties+=Property (',' properties+=Property)* ')' )?
 '{'
     (constant_entries+=Constant)*
     (attributes+=Attribute)*
 '}';
-RawType: 'rawtype' name=ID rawtypetype=RawTypeType bits=MYINT;
-Enum: 'enum' name=ID ':' type=[RawType:FQN] ('(' '.' 'description' '=' description=MYSTRING ')')?
+RawType: 'rawtype' name=ValidID rawtypetype=RawTypeType bits=MYINT;
+Enum: 'enum' name=ValidID ':' type=[RawType:FQN] ('(' '.' 'description' '=' description=MYSTRING ')')?
 '{'
     (enum_entries+=EnumEntry)+
 '}';
@@ -27,20 +27,20 @@ Type: RawType|Struct|Enum;
 
 Attribute: (if_attr=IfAttribute)? content=AttributeContent;
 AttributeContent: ScalarAttribute|ArrayAttribute|VariantAttribute;
-VariantAttribute: 'variant' name=ID ':' variant_selector=AttrRef '->' '{' // TODO variant_selector --> only scalarattr allowed!
+VariantAttribute: 'variant' name=ValidID ':' variant_selector=AttrRef '->' '{' // TODO variant_selector --> only scalarattr allowed!
 (mappings+=VariantMapping)+
 '}' ( '(' properties+=Property (',' properties+=Property)* ')' )?;
-ScalarAttribute: (embedded?='embedded')? 'scalar' name=ID ':' type=[Type:FQN]
+ScalarAttribute: (embedded?='embedded')? 'scalar' name=ValidID ':' type=[Type:FQN]
     ( '(' properties+=Property (',' properties+=Property)* ')' )?;
-ArrayAttribute: (embedded?='embedded')? 'array' name=ID ':' type=[Type:FQN] dims+=Dim
+ArrayAttribute: (embedded?='embedded')? 'array' name=ValidID ':' type=[Type:FQN] dims+=Dim
     ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 IfAttribute: 'if' predicate=Predicate;
 
 FormulaElement: ScalarAttribute|Constant|EnumEntry;
-EnumEntry: 'value' name=ID '=' value=Formula ( '(' properties+=Property (',' properties+=Property)* ')' )?;
+EnumEntry: 'value' name=ValidID '=' value=Formula ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 Dim: '[' dim=Formula ']';
 AttrRef: ref=[FormulaElement:FQN];
-VariantMapping: id=Formula ('=' the_name=ID)? ':' type=[Struct:FQN] ( '(' properties+=Property (',' properties+=Property)* ')' )?;
+VariantMapping: id=Formula ('=' the_name=ValidID)? ':' type=[Struct:FQN] ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 
 Import: 'import' importURI=MYSTRING;
 
@@ -66,7 +66,7 @@ Val:
 
 ValueClassificator: CONST='CONST'|ENUM='ENUM';
 
-PropertySet: 'property_set' name=ID ('extends' extends=[PropertySet:FQN])?
+PropertySet: 'property_set' name=ValidID ('extends' extends=[PropertySet:FQN])?
 '{'
     (property_definitions+=PropertyDefinition)+
 '}';
@@ -75,7 +75,7 @@ PropertySet: 'property_set' name=ID ('extends' extends=[PropertySet:FQN])?
 PropertyDefinition: 'property'
     (optional?='optional')?
     (('applicable' 'for'|'applicable_for') (applicable_for+=ApplicableFor (',' applicable_for+=ApplicableFor)*))?
-    name=ID ':'
+    name=ValidID ':'
     internaltype=InternalType
     ('(' '.' 'description' '=' description=MYSTRING ')')?
     ('{' (numberOfPropRestriction=NumberPropertiesPerStructDefRestriction)? '}')?;
@@ -85,16 +85,16 @@ NumberPropertiesPerStructDefRestriction: min=MYINT 'to' max=MYINT ('times_per_me
 // Note: "scalar" is used to disallow "arrays"
 ApplicableFor: ApplicableForRawType|'array'|'scalar'|'variant'|'struct_definition'|'enum_value'|'enum'|'struct';
 ApplicableForRawType: 'rawtype' ('(' concrete_types+=[RawType:FQN] ("," concrete_types+=[RawType:FQN])* ')')?;
-Property: '.' definition=[PropertyDefinition:ID] '=' (
+Property: '.' definition=[PropertyDefinition:ValidID] '=' (
 textValue=TextValue |
 numberValue=NumberValue
 );
 
-Constants: 'constants' name=ID ('(' '.' 'description' '=' description=MYSTRING ')')?
+Constants: 'constants' name=ValidID ('(' '.' 'description' '=' description=MYSTRING ')')?
 '{'
     (constant_entries+=Constant)+
 '}';
-Constant: 'constant' name=ID ':' type=[RawType:FQN] '=' value=Formula ('(' '.' 'description' '=' description=MYSTRING ')')?;
+Constant: 'constant' name=ValidID ':' type=[RawType:FQN] '=' value=Formula ('(' '.' 'description' '=' description=MYSTRING ')')?;
 
 TextValue: x=MYSTRING;
 NumberValue: x=Formula;
@@ -106,8 +106,9 @@ RawTypeType: INT='INT'|UINT='UINT'|FLOAT='FLOAT';
 InternalType: INT='INT'|UINT='UINT'|FLOAT='FLOAT'|STRING='STRING'|BOOL='BOOL'|ATTRTYPE='ATTRTYPE'|ENUM='ENUM';
 
 NUMBER returns number: STRICTFLOAT|MYINT;
-FQN returns string: ID ('.' ID)*;
+FQN returns string: ValidID ('.' ValidID)*;
 
+ValidID returns string: ID|"description";
 terminal ID: /[_a-zA-Z][\w_]*/;
 terminal MYINT returns number: /[0-9]+/;
 terminal HexNumber: /0x[0-9a-fA-F]+/;
