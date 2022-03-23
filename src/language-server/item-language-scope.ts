@@ -104,12 +104,12 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
                 const description = this.descriptions.createDescription(element, element.name, document);
                 localDescriptions.push(description);                
             }    
-            for (const element of (container as Package).items) {
+            for (const element of container.items) {
                 interruptAndCheck(cancelToken);
                 const description = this.descriptions.createDescription(element, element.name, document);
                 localDescriptions.push(description);                
             }    
-            for (const element of (container as Package).constants) {
+            for (const element of container.constants) {
                 interruptAndCheck(cancelToken);
                 const description = this.descriptions.createDescription(element, element.name, document);
                 localDescriptions.push(description);                
