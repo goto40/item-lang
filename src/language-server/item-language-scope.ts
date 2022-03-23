@@ -27,9 +27,9 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
         if (referenceId=="Property:definition" && node.$type=='Property') {
             let definitions: PropertyDefinition[]|undefined = [];
             definitions = get_parent_package(node)?.property_set?.ref?.property_definitions;
-            console.log(`definitions==${definitions}`);
+            // console.log(`definitions==${definitions}`);
             if (definitions!==undefined) {
-                definitions.forEach( d => { console.log(`name==${d.name}`); });
+                // definitions.forEach( d => { console.log(`name==${d.name}`); });
                 // solution suggested here: https://github.com/langium/langium/discussions/401
                 const descriptions = stream(definitions).map(element =>
                     this.descriptionProvider.createDescription(element, element.name, getDocument(element)));
@@ -58,46 +58,14 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
     async computeScope(document: LangiumDocument, cancelToken = CancellationToken.None): Promise<PrecomputedScopes> {
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
+        // console.log(`computeScope for ${document.uri.path}`)
         await this.processContainer(model, scopes, document, cancelToken);
         return scopes;
     }
 
     protected async processContainer(container: Model | Package | Struct | Constants, scopes: PrecomputedScopes, document: LangiumDocument, cancelToken: CancellationToken): Promise<AstNodeDescription[]> {
         const localDescriptions: AstNodeDescription[] = [];
-        if (isPackage(container) || isModel(container)) {
-            for (const element of container.packages) {
-                // console.log(`processContainer.. ${element.name}`)
-                interruptAndCheck(cancelToken);
-                const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
-                for (const description of nestedDescriptions) {
-                    // Add qualified names to the container
-                    const qualified = this.createQualifiedDescription(element, description, document);
-                    localDescriptions.push(qualified);
-                }
-            }
-        }
-        if (isPackage(container)) {
-            for (const element of container.items) {
-                if (isStruct(element)) {
-                    interruptAndCheck(cancelToken);
-                    const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
-                    for (const description of nestedDescriptions) {
-                        // Add qualified names to the container
-                        const qualified = this.createQualifiedDescription(element, description, document);
-                        localDescriptions.push(qualified);
-                    }
-                }
-            }
-            for (const element of container.constants) {
-                interruptAndCheck(cancelToken);
-                const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
-                for (const description of nestedDescriptions) {
-                    // Add qualified names to the container
-                    const qualified = this.createQualifiedDescription(element, description, document);
-                    localDescriptions.push(qualified);
-                }
-            }
-        }
+
         if (isPackage(container)) {
             for (const element of container.property_sets) {
                 interruptAndCheck(cancelToken);
@@ -128,6 +96,42 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
                 const description = this.descriptions.createDescription(element, element.name, document);
                 localDescriptions.push(description);                
             }    
+        }
+
+        if (isPackage(container) || isModel(container)) {
+            for (const element of container.packages) {
+                // console.log(`processContainer.. ${element.name}`)
+                interruptAndCheck(cancelToken);
+                const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
+                for (const description of nestedDescriptions) {
+                    // Add qualified names to the container
+                    const qualified = this.createQualifiedDescription(element, description, document);
+                    localDescriptions.push(qualified);
+                    // console.log(`adding ${qualified.name}`)
+                }
+            }
+        }
+        if (isPackage(container)) {
+            for (const element of container.items) {
+                if (isStruct(element)) {
+                    interruptAndCheck(cancelToken);
+                    const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
+                    for (const description of nestedDescriptions) {
+                        // Add qualified names to the container
+                        const qualified = this.createQualifiedDescription(element, description, document);
+                        localDescriptions.push(qualified);
+                    }
+                }
+            }
+            for (const element of container.constants) {
+                interruptAndCheck(cancelToken);
+                const nestedDescriptions = await this.processContainer(element, scopes, document, cancelToken);
+                for (const description of nestedDescriptions) {
+                    // Add qualified names to the container
+                    const qualified = this.createQualifiedDescription(element, description, document);
+                    localDescriptions.push(qualified);
+                }
+            }
         }
         scopes.addAll(container, localDescriptions);
         return localDescriptions;

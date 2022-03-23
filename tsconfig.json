@@ -6,7 +6,7 @@
     "sourceMap": true,
     "outDir": "out",
     "strict": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noImplicitReturns": true,
     "moduleResolution": "node",
     "esModuleInterop": true,

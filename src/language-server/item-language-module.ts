@@ -6,6 +6,7 @@ import { ItemLanguageGeneratedModule, ItemLanguageGeneratedSharedModule } from '
 import { ItemLanguageValidationRegistry, ItemLanguageValidator } from './item-language-validator';
 import { ItemLangNameProvider } from './item-language-naming'
 import { ItemLangScopeComputation, ItemLangScopeProvider } from './item-language-scope'
+import { ItemLangNameDescriptionProvider } from './item-language-index'
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -30,12 +31,15 @@ export type ItemLanguageServices = LangiumServices & ItemLanguageAddedServices
 export const ItemLanguageModule: Module<ItemLanguageServices, PartialLangiumServices & ItemLanguageAddedServices> = {
     references: {
         ScopeComputation: (injector) => new ItemLangScopeComputation(injector),
-        NameProvider: () => new ItemLangNameProvider(),
-        ScopeProvider: (services) => new ItemLangScopeProvider(services)
+        ScopeProvider: (services) => new ItemLangScopeProvider(services),
+        NameProvider: () => new ItemLangNameProvider()
     },
     validation: {
         ValidationRegistry: (services) => new ItemLanguageValidationRegistry(services),
         ItemLanguageValidator: () => new ItemLanguageValidator()
+    },
+    index: {
+        AstNodeDescriptionProvider: (services) => new ItemLangNameDescriptionProvider(services)
     }
 };
 

@@ -1,7 +1,7 @@
 import "first.item"
 
-package second {
+package second  (property_set basic_stuff.props) {
     struct Second {
-        scalar x: first.my_int
+        scalar x: first.First
     }
 }

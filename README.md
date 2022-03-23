@@ -8,7 +8,8 @@ This is work-in-progress and my playground to play with [langium](https://langiu
 
  - [X] Migrate raw grammar
  - [X] allow certain keywords (e.g. 'description') as ID in certain cases (e.g. for the name of property definitions): https://blogs.itemis.com/en/xtext-hint-identifiers-conflicting-with-keywords
- - [ ] importURI/multi-file: https://github.com/langium/langium/discussions/458
+ - [X] importURI/multi-file, basic demo: https://github.com/langium/langium/discussions/458
+ - [ ] importURI/multi-file, restrict lookup to included files: https://github.com/langium/langium/discussions/458
  - [ ] Scoping
    - [ ] Simple model elements, like types (FQN based)
    - [ ] Formulas
