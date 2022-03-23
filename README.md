@@ -11,7 +11,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
  - [X] importURI/multi-file, basic demo: https://github.com/langium/langium/discussions/458
  - [ ] importURI/multi-file, restrict lookup to included files: https://github.com/langium/langium/discussions/458
  - [ ] Scoping
-   - [ ] Simple model elements, like types (FQN based)
+   - [X] Simple model elements, like types (FQN based)
    - [ ] Formulas
    - [X] Properties (basic scoping / interactive test only): https://github.com/langium/langium/discussions/401
  - [ ] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
