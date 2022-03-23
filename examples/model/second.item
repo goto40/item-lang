@@ -2,6 +2,6 @@ import "first.item"
 
 package second  (property_set basic_stuff.props) {
     struct Second {
-        scalar x: first.First
+        scalar x: first.First (.description="Hello")
     }
 }
