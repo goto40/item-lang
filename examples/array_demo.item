@@ -1,0 +1,11 @@
+import "first.item"
+
+package array_demo {
+    struct Header {
+        scalar n: first.my_int
+    }
+    struct Demo {
+        scalar header: Header
+        array a: first.my_int[header.n]
+    }
+}
