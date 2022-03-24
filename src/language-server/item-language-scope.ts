@@ -1,7 +1,7 @@
 import { getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
-import { Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition} from './generated/ast';
+import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute} from './generated/ast';
 import { ItemLanguageServices } from './item-language-module';
 
 function get_parent_package(node: AstNode): Package|null {
@@ -12,6 +12,16 @@ function get_parent_package(node: AstNode): Package|null {
         if (p === null) return null;
     }
     return p as Package
+}
+
+function get_parent_struct(node: AstNode): Struct|null {
+    let p = node.$container;
+    while(!isStruct(p)) {
+        // "?." == "safe navigation" 
+        p = p?.$container;
+        if (p === null) return null;
+    }
+    return p as Struct
 }
 
 export class ItemLangScopeProvider extends DefaultScopeProvider {
@@ -38,8 +48,27 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
             else {
                 const result = super.getScope(node, referenceId);
                 return result;    
+            }    
+        }
+        else if (referenceId=="AttrRef:formula_element_ref" && node.$type=='AttrRef') {
+            // first: attributes
+            let attrs: Attribute[]|undefined = [];
+            attrs = get_parent_struct(node)?.attributes;
+            // console.log(`definitions==${definitions}`);
+            if (attrs!==undefined) {
+                const descriptions = stream(attrs)
+                    .filter(element => isScalarAttribute(element.content))
+                    .filter(element => !isStruct((element.content as ScalarAttribute).type) )
+                    .map(element =>
+                        this.descriptionProvider.createDescription(element, element.content.name, getDocument(element)));
+                return new StreamScope(descriptions);
             }
-    
+            else {
+                const result = super.getScope(node, referenceId);
+                return result;    
+            }
+
+            // TODO next global elements: fallback to super.getScope?
         }
         else {
             const result = super.getScope(node, referenceId);

@@ -6,6 +6,8 @@ package array_demo {
     }
     struct Demo {
         scalar header: Header
-        array a: first.my_int[header.n]
+        scalar m: first.my_int
+        array a1: first.my_int[m]
+        array a2: first.my_int[header.n]
     }
 }

@@ -39,7 +39,7 @@ IfAttribute: 'if' predicate=Predicate;
 FormulaElement: ScalarAttribute|Constant|EnumEntry;
 EnumEntry: 'value' name=ValidID '=' value=Formula ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 Dim: '[' dim=Formula ']';
-AttrRef: ref=[FormulaElement:FQN];
+AttrRef: formula_element_ref=[FormulaElement:FQN];
 VariantMapping: id=Formula ('=' the_name=ValidID)? ':' type=[Struct:FQN] ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 
 Import: 'import' importURI=MYSTRING;
