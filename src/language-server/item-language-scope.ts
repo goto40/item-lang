@@ -1,7 +1,7 @@
 import { Stream, getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
-import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute} from './generated/ast';
+import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute, FormulaElement} from './generated/ast';
 import { ItemLanguageServices } from './item-language-module';
 
 function get_parent_package(node: AstNode): Package|null {
@@ -33,12 +33,20 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
         this.descriptionProvider = services.index.AstNodeDescriptionProvider;
     }
 
-    getAttrRefStream(attrs: ArrayLike<Attribute>): Stream<AstNodeDescription> {
-        const descriptions = stream(attrs)
+    getAttrRefStream(prefix: String, attrs: ArrayLike<Attribute>): Stream<AstNodeDescription> {
+        let descriptions = stream(attrs)
             .filter(element => isScalarAttribute(element.content))
             .filter(element => !isStruct((element.content as ScalarAttribute).type) )
             .map(element =>
-                this.descriptionProvider.createDescription(element, element.content.name, getDocument(element)));
+                this.descriptionProvider.createDescription(element, prefix + element.content.name, getDocument(element)));
+
+        descriptions = Array.from(attrs)
+            .map(element => element.content)
+            .filter(isScalarAttribute)
+            .map(element => element.type.ref)
+            .filter(isStruct)
+            .reduce<Stream<AstNodeDescription>>((d, element) => d.concat(this.getAttrRefStream("header.", element.attributes)), descriptions)
+
         return descriptions
     }
 
@@ -65,7 +73,7 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
             attrs = get_parent_struct(node)?.attributes;
             // console.log(`definitions==${definitions}`);
             if (attrs!==undefined) {
-                return new StreamScope(this.getAttrRefStream(attrs));
+                return new StreamScope(this.getAttrRefStream("", attrs));
             }
             else {
                 const result = super.getScope(node, referenceId);
