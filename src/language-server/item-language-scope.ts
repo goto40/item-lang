@@ -73,14 +73,14 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
             attrs = get_parent_struct(node)?.attributes;
             // console.log(`definitions==${definitions}`);
             if (attrs!==undefined) {
-                return new StreamScope(this.getAttrRefStream("", attrs));
+                const other_scope = super.getScope(node, referenceId);
+                const result = new StreamScope(this.getAttrRefStream("", attrs), other_scope);
+                return result;
             }
             else {
                 const result = super.getScope(node, referenceId);
                 return result;    
             }
-
-            // TODO next global elements: fallback to super.getScope?
         }
         else {
             const result = super.getScope(node, referenceId);

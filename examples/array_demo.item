@@ -1,6 +1,9 @@
 import "first.item"
 
 package array_demo {
+    constants my_constis {
+        constant N: first.my_int = 20
+    }
     struct Header {
         scalar n: first.my_int
     }
@@ -9,5 +12,6 @@ package array_demo {
         scalar m: first.my_int
         array a1: first.my_int[m]
         array a2: first.my_int[header.n]
+        array a3: first.my_int[array_demo.my_constis.N]
     }
 }

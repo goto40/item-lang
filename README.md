@@ -12,7 +12,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
  - [ ] importURI/multi-file, restrict lookup to included files: https://github.com/langium/langium/discussions/458
  - [ ] Scoping
    - [X] Simple model elements, like types (FQN based)
-   - [ ] Complex model relations, like attribute references: `array a: my_int[header.n]`
+   - [ ] Complex model relations, like attribute references: `array a: my_int[header.n]`; TODO: also provide path to element!
    - [ ] Formulas
    - [X] Properties (basic scoping / interactive test only): https://github.com/langium/langium/discussions/401
  - [ ] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
