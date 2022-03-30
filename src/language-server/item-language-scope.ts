@@ -4,18 +4,42 @@ import { ItemLangNameProvider } from './item-language-naming';
 import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute, FormulaElement} from './generated/ast';
 import { ItemLanguageServices } from './item-language-module';
 import { isAttrRef } from './generated/ast';
-import { ScalarAttrRef } from './generated/ast';
-import { isScalarAttrRef } from './generated/ast';
 import { isAttribute } from './generated/ast';
+import { connect } from 'http2';
 
 function get_parent_package(node: AstNode): Package|null {
     let p = node.$container;
     while(!isPackage(p)) {
         // "?." == "safe navigation" 
         p = p?.$container;
-        if (p === null) return null;
+        if (p === undefined) return null;
     }
     return p as Package
+}
+
+function get_parent_packages(node: AstNode): Package[] {
+    let result : Package[] = [];
+    let finished = true;
+    const first = get_parent_package(node);
+    if (first!==null) {
+        result.push.apply(result,[first]);
+        finished = false;
+    }
+    let current = result;
+    while(!finished) {
+        finished = true;
+        let next : Package[] = [];
+        current.forEach( (p) => {
+            const np = get_parent_package(p);
+            if (np!==null) {
+                next.push.apply(next, [np]);
+                finished = false;
+            }
+        });
+        result.push.apply(result, next);
+        current = next
+    }
+    return result
 }
 
 function get_parent_struct(node: AstNode): Struct|null {
@@ -28,28 +52,35 @@ function get_parent_struct(node: AstNode): Struct|null {
     return p as Struct
 }
 
-function get_previous_element_type(node: ScalarAttrRef): Struct|null {
+function get_possible_next_elements(node: AstNode): AstNode[]|null {
     const e = node.$container;
     if (isAttrRef(e)) {
-        console.log(`isAttrRef! ${e.formula_element_ref.$refText} is ${(e.formula_element_ref.ref as AstNode).$type}`)
-        if(isAttribute(e.formula_element_ref.ref)) {
+        console.log(`isAttrRef! ${e.element_ref.$refText} is ${(e.element_ref.ref as AstNode).$type}`)
+        if(isAttribute(e.element_ref.ref)) {
+            let result : AstNode[] = [];
             console.log(`isAttribute!`)
-            if(isScalarAttribute(e.formula_element_ref.ref)) {
+            if(isScalarAttribute(e.element_ref.ref)) {
                 console.log(`isScalarAttribute!`)
-                if (isStruct(e.formula_element_ref.ref?.type.ref)) {
+                if (isStruct(e.element_ref.ref?.type.ref)) {
                     console.log(`isStruct!`)
-                    return e.formula_element_ref.ref?.type.ref;
+                    result.push.apply(result, e.element_ref.ref?.type.ref.attributes);
                 }
             }
+            return result;
         }
     }
-    else if (isScalarAttrRef(e)) {
-        //console.log(`isScalarAttrRef!`)
-        if(isScalarAttribute(e.element_ref)) {
-            if (isStruct(e.element_ref.type)) {
-                return e.element_ref.type;
-            }
+    else if (e !== undefined) {
+        const s = get_parent_struct(e);
+        let result : AstNode[] = [];
+        if (s!==null) {
+            console.log(`isStruct! ${s.name}`)
+            result.push.apply(result, s.attributes);
+            result.push.apply(result, s.constant_entries);
+ 
+            const pkgs = get_parent_packages(s);
+            result.push.apply(result, pkgs);
         }
+        return result;
     }
     return null;
 }
@@ -63,10 +94,9 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
         this.descriptionProvider = services.index.AstNodeDescriptionProvider;
     }
 
-    getAttrRefStream(prefix: String, attrs: ArrayLike<Attribute>): Stream<AstNodeDescription> {
+    getElementRefStream(prefix: String, attrs: ArrayLike<AstNode>): Stream<AstNodeDescription> {
         let descriptions = stream(attrs)
             .filter(isScalarAttribute)
-            .filter(element => !isStruct((element as ScalarAttribute).type) )
             .map(element =>
                 this.descriptionProvider.createDescription(element, prefix + element.name, getDocument(element)));
 
@@ -98,33 +128,17 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
                 return result;    
             }    
         }
-        else if (referenceId=="AttrRef:formula_element_ref" && node.$type=='AttrRef') {
-            // first: attributes
-            let attrs: Attribute[]|undefined = [];
-            attrs = get_parent_struct(node)?.attributes;
-            // console.log(`definitions==${definitions}`);
-            if (attrs!==undefined) {
-                const other_scope = super.getScope(node, referenceId);
-                const result = new StreamScope(this.getAttrRefStream("", attrs), other_scope);
+        else if (referenceId=="AttrRef:element_ref" && node.$type=='AttrRef') {
+            let attrs: AstNode[]|null = [];
+            attrs = get_possible_next_elements(node);
+            attrs?.forEach( value => {console.log(value.$type);})
+            if (attrs!==null) {
+                const result = new StreamScope(this.getElementRefStream("", attrs));
                 return result;
             }
             else {
-                const result = super.getScope(node, referenceId);
-                return result;    
-            }
-        }
-        else if (referenceId=="ScalarAttrRef:element_ref" && node.$type=='ScalarAttrRef') {
-            // first: attributes
-            let attrs: Attribute[]|undefined = [];
-            attrs = get_previous_element_type(node as ScalarAttrRef)?.attributes;
-            console.log(`get_previous_element_type ${(node as ScalarAttrRef).element_ref.$refText} ==> ${attrs}`);
-            if (attrs!==undefined) {
                 const other_scope = super.getScope(node, referenceId);
-                const result = new StreamScope(this.getAttrRefStream("", attrs), other_scope);
-                return result;
-            }
-            else {
-                const result = super.getScope(node, referenceId);
+                const result = new StreamScope(this.getElementRefStream("", []));
                 return result;    
             }
         }
