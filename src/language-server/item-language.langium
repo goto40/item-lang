@@ -25,8 +25,7 @@ Enum: 'enum' name=ValidID ':' type=[RawType:FQN] ('(' '.' 'description' '=' desc
 '}';
 Type: RawType|Struct|Enum;
 
-Attribute: (if_attr=IfAttribute)? content=AttributeContent;
-AttributeContent: ScalarAttribute|ArrayAttribute|VariantAttribute;
+Attribute: (if_attr=IfAttribute)? ScalarAttribute|ArrayAttribute|VariantAttribute;
 VariantAttribute: 'variant' name=ValidID ':' variant_selector=AttrRef '->' '{' // TODO variant_selector --> only scalarattr allowed!
 (mappings+=VariantMapping)+
 '}' ( '(' properties+=Property (',' properties+=Property)* ')' )?;
@@ -39,7 +38,9 @@ IfAttribute: 'if' predicate=Predicate;
 FormulaElement: ScalarAttribute|Constant|EnumEntry;
 EnumEntry: 'value' name=ValidID '=' value=Formula ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 Dim: '[' dim=Formula ']';
-AttrRef: formula_element_ref=[FormulaElement:FQN];
+AttrRef: element_ref=[FormulaElement:ValidID] ( '.' next=ScalarAttrRef )?;
+ScalarAttrRef: element_ref=[ScalarAttribute:ValidID] ( '.' next=ScalarAttrRef )?;
+
 VariantMapping: id=Formula ('=' the_name=ValidID)? ':' type=[Struct:FQN] ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 
 Import: 'import' importURI=MYSTRING;
