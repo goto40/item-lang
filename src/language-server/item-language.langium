@@ -35,8 +35,8 @@ ArrayAttribute: (embedded?='embedded')? 'array' name=ValidID ':' type=[Type:FQN]
     ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 IfAttribute: 'if' predicate=Predicate;
 
-ValidFormulaElement: ScalarAttribute|Constant|EnumEntry;
-FormulaElement: ScalarAttribute|Constant|EnumEntry|Package|Constants|Struct;
+// ValidFormulaElement: ScalarAttribute|Constant|EnumEntry;
+FormulaElement: Package|Constants|Struct|ScalarAttribute|Constant|EnumEntry;
 EnumEntry: 'value' name=ValidID '=' value=Formula ( '(' properties+=Property (',' properties+=Property)* ')' )?;
 Dim: '[' dim=Formula ']';
 AttrRef: element_ref=[FormulaElement:ValidID] ( '.' next=AttrRef )?;

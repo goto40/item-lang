@@ -1,7 +1,7 @@
 import { Stream, getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
-import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute, FormulaElement} from './generated/ast';
+import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute, FormulaElement, isFormulaElement} from './generated/ast';
 import { ItemLanguageServices } from './item-language-module';
 import { isAttrRef } from './generated/ast';
 import { isAttribute } from './generated/ast';
@@ -54,20 +54,33 @@ function get_parent_struct(node: AstNode): Struct|null {
 
 function get_possible_next_elements(node: AstNode): AstNode[]|null {
     const e = node.$container;
-    if (isAttrRef(e)) {
-        console.log(`isAttrRef! ${e.element_ref.$refText} is ${(e.element_ref.ref as AstNode).$type}`)
-        if(isAttribute(e.element_ref.ref)) {
+    function next_elements(e: FormulaElement|undefined): AstNode[]|null {
+        if(isAttribute(e)) {
             let result : AstNode[] = [];
             console.log(`isAttribute!`)
-            if(isScalarAttribute(e.element_ref.ref)) {
-                console.log(`isScalarAttribute!`)
-                if (isStruct(e.element_ref.ref?.type.ref)) {
-                    console.log(`isStruct!`)
-                    result.push.apply(result, e.element_ref.ref?.type.ref.attributes);
+            if(isScalarAttribute(e)) {
+                if (isStruct(e.type.ref)) {
+                    result.push.apply(result, e.type.ref.attributes);
                 }
             }
             return result;
         }
+        else if (isPackage(e)) {
+            let result : AstNode[] = [];
+            result.push.apply(result, e.packages);
+            result.push.apply(result, e.items);
+            result.push.apply(result, e.constants);
+            return result;
+        }
+        else if (isConstants(e)||isStruct(e)) {
+            let result : AstNode[] = [];
+            result.push.apply(result, e.constant_entries);
+            return result;
+        }
+        return null;        
+    }
+    if (isAttrRef(e)) {
+        return next_elements(e.element_ref.ref);
     }
     else if (e !== undefined) {
         const s = get_parent_struct(e);
@@ -96,7 +109,7 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
 
     getElementRefStream(prefix: String, attrs: ArrayLike<AstNode>): Stream<AstNodeDescription> {
         let descriptions = stream(attrs)
-            .filter(isScalarAttribute)
+            .filter(isFormulaElement)
             .map(element =>
                 this.descriptionProvider.createDescription(element, prefix + element.name, getDocument(element)));
 
@@ -131,13 +144,13 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
         else if (referenceId=="AttrRef:element_ref" && node.$type=='AttrRef') {
             let attrs: AstNode[]|null = [];
             attrs = get_possible_next_elements(node);
-            attrs?.forEach( value => {console.log(value.$type);})
             if (attrs!==null) {
+                //attrs = attrs.filter(e => ((e as FormulaElement).name!="m"))
+                attrs.forEach( value => {console.log(`${value.$type}: ${(value as FormulaElement).name}`);})
                 const result = new StreamScope(this.getElementRefStream("", attrs));
                 return result;
             }
             else {
-                const other_scope = super.getScope(node, referenceId);
                 const result = new StreamScope(this.getElementRefStream("", []));
                 return result;    
             }

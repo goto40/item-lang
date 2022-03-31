@@ -1,6 +1,11 @@
 import "first.item"
 
 package array_demo {
+    package inner {
+        struct A {
+            scalar x: first.my_int
+        }
+    }
     constants my_constis {
         constant N: first.my_int = 20
     }
@@ -12,7 +17,7 @@ package array_demo {
         scalar m: first.my_int
         array a1: first.my_int[m]
         array a2: first.my_int[header.n]
-        array a3: first.my_int[array_demo]
+        array a3: first.my_int[array_demo.inner.A]
         array a3: first.my_int[array_demo.my_constis.N]
     }
 }
