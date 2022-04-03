@@ -56,7 +56,7 @@ function get_possible_next_elements(node: AstNode): AstNode[]|null {
     function next_elements(e: FormulaElement|undefined): AstNode[]|null {
         if(isAttribute(e)) {
             let result : AstNode[] = [];
-            console.log(`isAttribute!`)
+            //console.log(`isAttribute!`)
             if(isScalarAttribute(e)) {
                 if (isStruct(e.type.ref)) {
                     result.push.apply(result, e.type.ref.attributes);
@@ -85,7 +85,7 @@ function get_possible_next_elements(node: AstNode): AstNode[]|null {
         const s = get_parent_struct(e);
         let result : AstNode[] = [];
         if (s!==null) {
-            console.log(`isStruct! ${s.name}`)
+            //console.log(`isStruct! ${s.name}`)
             result.push.apply(result, s.attributes);
             result.push.apply(result, s.constant_entries);
  
