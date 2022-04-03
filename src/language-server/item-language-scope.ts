@@ -1,11 +1,10 @@
-import { Stream, getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
+import { EMPTY_SCOPE, Stream, getDocument, AstNodeDescriptionProvider, AstNodeDescription, DefaultScopeComputation, interruptAndCheck, LangiumDocument, LangiumServices, PrecomputedScopes, AstNode, MultiMap, DefaultScopeProvider, StreamScope, Scope, stream} from 'langium';
 import { CancellationToken } from 'vscode-jsonrpc';
 import { ItemLangNameProvider } from './item-language-naming';
 import { isScalarAttribute, Attribute, Model, Package, isPackage, Struct, isStruct, Constants, isConstants, isModel, PropertyDefinition, ScalarAttribute, FormulaElement, isFormulaElement} from './generated/ast';
 import { ItemLanguageServices } from './item-language-module';
 import { isAttrRef } from './generated/ast';
 import { isAttribute } from './generated/ast';
-import { connect } from 'http2';
 
 function get_parent_package(node: AstNode): Package|null {
     let p = node.$container;
@@ -125,7 +124,7 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
     }
 
     getScope(node: AstNode, referenceId: string): Scope {
-        if (referenceId=="Property:definition" && node.$type=='Property') {
+        if (referenceId=="Property:definition") {
             let definitions: PropertyDefinition[]|undefined = [];
             definitions = get_parent_package(node)?.property_set?.ref?.property_definitions;
             // console.log(`definitions==${definitions}`);
@@ -137,16 +136,15 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
                 return new StreamScope(descriptions);
             }
             else {
-                const result = super.getScope(node, referenceId);
-                return result;    
+                return EMPTY_SCOPE;
             }    
         }
-        else if (referenceId=="AttrRef:element_ref" && node.$type=='AttrRef') {
+        else if (referenceId=="AttrRef:element_ref") {
             let attrs: AstNode[]|null = [];
             attrs = get_possible_next_elements(node);
             if (attrs!==null) {
                 //attrs = attrs.filter(e => ((e as FormulaElement).name!="m"))
-                attrs.forEach( value => {console.log(`${value.$type}: ${(value as FormulaElement).name}`);})
+                //attrs.forEach( value => {console.log(`${value.$type}: ${(value as FormulaElement).name}`);})
                 const result = new StreamScope(this.getElementRefStream("", attrs));
                 return result;
             }
