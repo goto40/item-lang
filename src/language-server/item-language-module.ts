@@ -1,12 +1,13 @@
 import {
     createDefaultModule, createDefaultSharedModule, DefaultSharedModuleContext, inject,
-    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices
+    LangiumServices, LangiumSharedServices, Module, PartialLangiumServices, PartialLangiumSharedServices
 } from 'langium';
 import { ItemLanguageGeneratedModule, ItemLanguageGeneratedSharedModule } from './generated/module';
 import { ItemLanguageValidationRegistry, ItemLanguageValidator } from './item-language-validator';
 import { ItemLangNameProvider } from './item-language-naming'
 import { ItemLangScopeComputation, ItemLangScopeProvider } from './item-language-scope'
 import { ItemLangNameDescriptionProvider } from './item-language-index'
+import { ItemLangWorkspaceManager } from './item-language-workspace';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -43,6 +44,14 @@ export const ItemLanguageModule: Module<ItemLanguageServices, PartialLangiumServ
     }
 };
 
+export type ItemLanguageSharedServices = LangiumSharedServices
+
+export const ItemLanguageSharedModule: Module<ItemLanguageSharedServices, PartialLangiumSharedServices> = {
+    workspace: {
+        WorkspaceManager: (services) => new ItemLangWorkspaceManager(services)
+    }
+};
+
 /**
  * Create the full set of services required by Langium.
  *
@@ -64,7 +73,8 @@ export function createItemLanguageServices(context?: DefaultSharedModuleContext)
 } {
     const shared = inject(
         createDefaultSharedModule(context),
-        ItemLanguageGeneratedSharedModule
+        ItemLanguageGeneratedSharedModule,
+        ItemLanguageSharedModule
     );
     const ItemLanguage = inject(
         createDefaultModule({ shared }),
