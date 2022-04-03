@@ -1,11 +1,13 @@
-import { DefaultWorkspaceManager, LangiumDocument, LangiumSharedServices } from 'langium';
+import { DefaultLangiumDocumentFactory, DefaultWorkspaceManager, LangiumDocument, LangiumDocumentFactory, LangiumSharedServices } from 'langium';
 import { WorkspaceFolder } from 'vscode-languageclient';
-
+import { URI } from 'vscode-uri';
 
 export class ItemLangWorkspaceManager extends DefaultWorkspaceManager {
+    factory : LangiumDocumentFactory
     constructor(services: LangiumSharedServices) {
         super(services);
         console.log("ItemWorkspaceManager created.");
+        this.factory = new DefaultLangiumDocumentFactory(services)
     }
 
     protected loadAdditionalDocuments(_folders: WorkspaceFolder[], _collector: (document: LangiumDocument) => void): Promise<void> {
@@ -27,7 +29,8 @@ export class ItemLangWorkspaceManager extends DefaultWorkspaceManager {
             rawtype float64 FLOAT 64
         }        
         `
-        
+        const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("built_in"));
+        _collector(doc);
         return Promise.resolve();
     }
 }

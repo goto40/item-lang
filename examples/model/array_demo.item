@@ -4,6 +4,7 @@ package array_demo {
     package inner {
         struct A {
             scalar x: first.my_int
+            scalar y: built_in.uint32
         }
     }
     constants my_constis {
