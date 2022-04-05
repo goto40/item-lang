@@ -16,7 +16,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
    - [ ] Discuss direct vs. full modified path references (in the "mixed" case where I syntactically want to allows the user to use both for the same attribute)
    - [ ] Formulas
    - [X] Properties (basic scoping / interactive test only): https://github.com/langium/langium/discussions/401
- - [50%] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
+ - [X] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
  - [ ] validation
    - [ ] make list of available validation rules here
  - [ ] test framework setup
