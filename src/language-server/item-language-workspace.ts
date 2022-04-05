@@ -29,7 +29,7 @@ export class ItemLangWorkspaceManager extends DefaultWorkspaceManager {
             rawtype float64 FLOAT 64
         }        
         `
-        const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("built_in"));
+        const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("memory://built_in.item"));
         _collector(doc);
         return Promise.resolve();
     }
