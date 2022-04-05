@@ -11,6 +11,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
  - [X] importURI/multi-file, basic demo: https://github.com/langium/langium/discussions/458
  - [ ] importURI/multi-file, restrict lookup to included files: https://github.com/langium/langium/discussions/458
  - [ ] Scoping
+   - [ ] auto-completion makes some problems
    - [X] Simple model elements, like types (FQN based)
    - [X] Complex model relations, like attribute references: `array a: my_int[header.n]`; TODO: also provide path to element!
    - [ ] Discuss direct vs. full modified path references (in the "mixed" case where I syntactically want to allows the user to use both for the same attribute)
