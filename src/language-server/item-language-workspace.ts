@@ -31,6 +31,9 @@ export class ItemLangWorkspaceManager extends DefaultWorkspaceManager {
         `
         const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("memory://built_in.item"));
         _collector(doc);
+        
+        // add doc to the cache, as suggested in https://github.com/langium/langium/issues/464
+        this.langiumDocuments.addDocument(doc);
         return Promise.resolve();
     }
 }
