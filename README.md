@@ -18,6 +18,7 @@ This is work-in-progress and my playground to play with [langium](https://langiu
    - [ ] Formulas
    - [X] Properties (basic scoping / interactive test only): https://github.com/langium/langium/discussions/401
  - [X] built-in model (e.g. built-in types and properties): https://github.com/langium/langium/discussions/391
+ - [ ] TODO: make property_set built_in.props implicit
  - [ ] validation
    - [ ] make list of available validation rules here
  - [ ] test framework setup
