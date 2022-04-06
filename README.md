@@ -24,6 +24,6 @@ This is work-in-progress and my playground to play with [langium](https://langiu
  - [ ] validation
    - [ ] make list of available validation rules here
  - [ ] test framework setup
- - [ ] tests
+ - [x] tests
    - [ ] make a list of available tests in the original python version
  
