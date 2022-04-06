@@ -10,17 +10,27 @@
         "Programming Languages"
     ],
     "contributes": {
-        "languages": [{
-            "id": "item-language",
-            "aliases": ["Item Language", "item-language"],
-            "extensions": [".item", ".msg"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "item-language",
-            "scopeName": "source.item-language",
-            "path": "./syntaxes/item-language.tmLanguage.json"
-        }]
+        "languages": [
+            {
+                "id": "item-language",
+                "aliases": [
+                    "Item Language",
+                    "item-language"
+                ],
+                "extensions": [
+                    ".item",
+                    ".msg"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
+        "grammars": [
+            {
+                "language": "item-language",
+                "scopeName": "source.item-language",
+                "path": "./syntaxes/item-language.tmLanguage.json"
+            }
+        ]
     },
     "activationEvents": [
         "onLanguage:item-language"
@@ -40,7 +50,8 @@
         "watch": "tsc -b tsconfig.json --watch",
         "lint": "eslint src --ext ts",
         "langium:generate": "langium generate",
-        "langium:watch": "langium generate --watch"
+        "langium:watch": "langium generate --watch",
+        "test": "jest"
     },
     "dependencies": {
         "chevrotain": "^9.1.0",
@@ -52,12 +63,15 @@
         "vscode-uri": "^3.0.2"
     },
     "devDependencies": {
-        "@types/node": "^14.17.3",
+        "@types/jest": "^27.4.1",
+        "@types/node": "^14.18.12",
         "@types/vscode": "^1.56.0",
         "@typescript-eslint/eslint-plugin": "^4.14.1",
         "@typescript-eslint/parser": "^4.14.1",
         "eslint": "^7.19.0",
+        "jest": "^27.5.1",
         "langium-cli": "^0.3.0",
-        "typescript": "^4.1.3"
+        "ts-jest": "^27.1.4",
+        "typescript": "^4.6.3"
     }
 }
