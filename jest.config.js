@@ -12,4 +12,5 @@ module.exports = {
     "!src/language-server/main.ts",
   ],
   moduleFileExtensions: ["ts", "js", "json"],
+  testResultsProcessor: "./node_modules/jest-junit-reporter",
 };
