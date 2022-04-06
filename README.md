@@ -1,5 +1,5 @@
 # item-lang 
-![Build status](https://github.com/goto40/item-lang/actions/workflows/node.js.yml/badge.svg)](https://github.com/goto40/item-lang/actions)
+[![Build status](https://github.com/goto40/item-lang/actions/workflows/node.js.yml/badge.svg)](https://github.com/goto40/item-lang/actions)
 [
 A custom IDL, a reimplementation of [https://github.com/goto40/mdsd](https://github.com/goto40/mdsd).
 
