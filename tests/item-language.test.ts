@@ -45,7 +45,7 @@ it("test parsing a simple model with builtin model", async () => {
     services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
     const doc = services.shared.workspace.LangiumDocumentFactory.fromString(
         `
-            package first (property_set built_in.props) {
+            package first_using_builtin (property_set built_in.props) {
                 struct First {
                     scalar x: built_in.float64 (.description="x value")
                     scalar y: built_in.float64 (.description="y value")
