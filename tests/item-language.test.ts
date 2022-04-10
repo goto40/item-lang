@@ -71,6 +71,7 @@ const services = createItemLanguageServices().ItemLanguage;
 
 it("test parsing a simple model with builtin model2", async () => {
     services.shared.workspace.WorkspaceManager.initializeWorkspace([]);
+
     const myDoc: LangiumDocument = await parseDocument(services, `
         package first_using_builtin (property_set built_in.props) {
             rawtype testInt UINT 32

@@ -31,7 +31,7 @@ export type ItemLanguageServices = LangiumServices & ItemLanguageAddedServices
  */
 export const ItemLanguageModule: Module<ItemLanguageServices, PartialLangiumServices & ItemLanguageAddedServices> = {
     references: {
-        ScopeComputation: (injector) => new ItemLangScopeComputation(injector),
+        ScopeComputation: (services) => new ItemLangScopeComputation(services),
         ScopeProvider: (services) => new ItemLangScopeProvider(services),
         NameProvider: () => new ItemLangNameProvider()
     },
