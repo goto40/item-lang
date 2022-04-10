@@ -3,7 +3,7 @@ import { createItemLanguageServices } from '../src/language-server/item-language
 import { Model, ScalarAttribute, Struct } from '../src/language-server/generated/ast';
 import { URI } from 'vscode-uri';
 import { Mode } from 'fs';
-import { parseDocument } from 'langium/lib/test';
+import { parseDocument } from 'langium/test';
 
 const services = createItemLanguageServices().ItemLanguage;
 
