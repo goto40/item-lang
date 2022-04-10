@@ -103,6 +103,7 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
 
     constructor(services: ItemLanguageServices) {
         super(services);
+        console.log("created ItemLangScopeProvider")
         this.descriptionProvider = services.index.AstNodeDescriptionProvider;
     }
 
@@ -154,9 +155,18 @@ export class ItemLangScopeProvider extends DefaultScopeProvider {
             }
         }
         else {
+            if (referenceId=="ScalarAttribute:type") {
+                this.printInfo();
+            }
             const result = super.getScope(node, referenceId);
             return result;
         }
+    }
+
+    printInfo() {
+        this.indexManager.allElements("Type").forEach((value, index) => {
+            console.log(`index.allElements[${index}]=${value.name}`)
+        })
     }
 
 }

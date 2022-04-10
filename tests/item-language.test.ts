@@ -4,6 +4,7 @@ import { Model, ScalarAttribute, Struct } from '../src/language-server/generated
 import { URI } from 'vscode-uri';
 import { Mode } from 'fs';
 import { parseDocument } from 'langium/test';
+import { ItemLangScopeProvider } from '../src/language-server/item-language-scope';
 
 const services = createItemLanguageServices().ItemLanguage;
 
@@ -87,7 +88,9 @@ it("test parsing a simple model with builtin model2", async () => {
     expect(model.packages[0].name).toEqual("first_using_builtin")
     expect(model.packages[0].items.length).toEqual(2)
     const struct = model.packages[0].items[1] as Struct
-    expect(struct.name).toEqual("First")
+    expect(struct.name).toEqual("First");
+
+    //(services.references.ScopeProvider as ItemLangScopeProvider).printInfo();
 
     const scope = services.references.ScopeProvider.getScope((struct.attributes[0] as ScalarAttribute),"ScalarAttribute:type");
     scope.getAllElements().forEach( (value, index) => {
