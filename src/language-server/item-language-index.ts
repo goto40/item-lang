@@ -19,6 +19,7 @@ export class ItemLangNameDescriptionProvider extends DefaultAstNodeDescriptionPr
      * Exports only types (`DataType or `Entity`) with their qualified names.
      */
     async createDescriptions(document: LangiumDocument, cancelToken = CancellationToken.None): Promise<AstNodeDescription[]> {
+        console.log(`Index::createDescriptions ${document.uri}`)
         const descr: AstNodeDescription[] = [];
         for (const modelNode of streamAllContents(document.parseResult.value)) {
             await interruptAndCheck(cancelToken);

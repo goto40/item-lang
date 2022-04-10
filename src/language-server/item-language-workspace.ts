@@ -29,7 +29,7 @@ export class ItemLangWorkspaceManager extends DefaultWorkspaceManager {
             rawtype float64 FLOAT 64
         }        
         `
-        const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("memory://built_in.item"));
+        const doc : LangiumDocument = this.factory.fromString(model_text, URI.parse("memory://built_in_0.item"));
         _collector(doc);
         
         // add doc to the cache, as suggested in https://github.com/langium/langium/issues/464

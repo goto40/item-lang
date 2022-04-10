@@ -168,6 +168,7 @@ export class ItemLangScopeComputation extends DefaultScopeComputation {
     }
 
     async computeScope(document: LangiumDocument, cancelToken = CancellationToken.None): Promise<PrecomputedScopes> {
+        console.log(`ItemLangScopeComputation::computeScope ${document.uri}`)
         const model = document.parseResult.value as Model;
         const scopes = new MultiMap<AstNode, AstNodeDescription>();
         // console.log(`computeScope for ${document.uri.path}`)
